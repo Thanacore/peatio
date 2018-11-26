@@ -10,15 +10,20 @@ class OrderBid < Order
             numericality: { less_than_or_equal_to: ->(order){ order.market.max_bid }},
             if: ->(order){ order.ord_type == 'limit' && order.market.max_bid.present? }
 
+<<<<<<< HEAD
   validates :origin_volume,
             presence: true,
             numericality: { greater_than_or_equal_to: ->(order){ order.market.min_bid_amount }},
             if: ->(order){ order.market.min_bid_amount.present? }
 
+=======
+  # @deprecated
+>>>>>>> 5080dd77... Rework Peatio accounting using double entry accounting system  (#1777)
   def hold_account
     member.get_account(bid)
   end
 
+  # @deprecated
   def hold_account!
     Account.lock.find_by!(member_id: member_id, currency_id: bid)
   end
@@ -34,6 +39,10 @@ class OrderBid < Order
   def avg_price
     return ::Trade::ZERO if funds_received.zero?
     config.fix_number_precision(:bid, funds_used / funds_received)
+  end
+
+  def currency
+    Currency.find(bid)
   end
 
   LOCKING_BUFFER_FACTOR = '1.1'.to_d
