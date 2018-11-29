@@ -7,6 +7,11 @@
 //= require popper
 //= require bootstrap
 //= require bootstrap-datetimepicker
+<<<<<<< HEAD
 //= require jsoneditor.min
+=======
+//= require moment.min
+//= require daterangepicker
+>>>>>>> ba82f0f3... Income Statement (#1845)
 //= require admin/app
 //= require theme/sidebar
