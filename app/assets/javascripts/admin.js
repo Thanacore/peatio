@@ -8,5 +8,7 @@
 //= require bootstrap
 //= require bootstrap-datetimepicker
 //= require jsoneditor.min
+//= require moment.min
+//= require daterangepicker
 //= require admin/app
 //= require theme/sidebar
