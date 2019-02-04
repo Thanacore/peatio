@@ -98,9 +98,9 @@ steps:
 # Update application version, markdown and swagger documentation, then push it to git repository.
 - name: git-tag-and-push
   image: ruby:2.5.3
-  settings:
-    github_api_key:
-      from_secret: github_api_key
+  environment:
+    GITHUB_API_KEY:
+      from_secret: GITHUB_API_KEY
   commands:
   - ./bin/init_config
   - bundle install --deployment --without production development --jobs=$(nproc) --retry=3

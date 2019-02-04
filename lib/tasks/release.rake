@@ -13,8 +13,8 @@ namespace 'release' do
   desc 'Bump the version of the application'
 
   task :drone do
-    unless ENV['DRONE_BRANCH'] == 'master'
-      Kernel.abort 'Bumping version aborted: GitHub pull request detected.'
+    unless ENV['DRONE_BRANCH'] == 'drone'
+      Kernel.abort 'Bumping version aborted: branch is not a master.'
     end
 
     unless ENV['DRONE_PULL_REQUEST'].to_s.empty?
