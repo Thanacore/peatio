@@ -104,8 +104,8 @@ steps:
   commands:
   - ./bin/init_config
   - curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
-  - сhmod +x $HOME/.nvm/nvm.sh
-  - ./$HOME/.nvm/nvm.sh install 8 && ./$HOME/.nvm/nvm.sh use 8
+  - . $HOME/.nvm/nvm.sh
+  - nvm install 8 && nvm use 8
   - npm i -g yarn
   - bundle install --deployment --without production development --jobs=$(nproc) --retry=3
   - bundle exec rake release:drone
