@@ -22,7 +22,7 @@ services:
 steps:
 # Copy bundler cache from the host machine to your build environment.
 # Plugin description: http://plugins.drone.io/drillster/drone-volume-cache
-- name: restore-cache
+- name: restore-bundler-cache
   pull: default
   image: drillster/drone-volume-cache
   settings:
@@ -33,15 +33,26 @@ steps:
   - name: bundle-cache
     path: /cache
 
-# Wait mysql to be ready for taking connections.
-- name: ping-mysql
-  image: mysql:5.7
+# Copy docker cache from the host machine to your build environment.
+# Plugin description: http://plugins.drone.io/drillster/drone-volume-cache
+# - name: restore-docker-cache
+#   pull: default
+#   image: drillster/drone-volume-cache
+#   settings:
+#     restore: true
+#     mount:
+#     - vendor/bundle
+#   volumes:
+#   - name: bundle-cache
+#     path: /cache
+
+# Wait MySQL to be ready for taking connections.
+- name: wait-for-mysql
+  image: jwilder/dockerize:0.6.0
   environment:
     DATABASE_HOST: database
   commands:
-    - while ! mysqladmin ping -h$DATABASE_HOST -uroot --silent; do
-    - sleep 2
-    - done
+  - dockerize -wait tcp://${DATABASE_HOST}:3306 -timeout 1m
 
 # Initialize application. Install dependencies. Migrate database. Run rspec.
 - name: run-rspec
@@ -53,10 +64,10 @@ steps:
     REDIS_URL: redis://redis:6379
     RAILS_ENV: test
   commands:
-    - ./bin/init_config
-    - bundle install --deployment --without production development --jobs=$(nproc) --retry=3
-    - bundle exec rake db:create db:migrate
-    - LOG_LEVEL=warn bundle exec rspec
+  - ./bin/init_config
+  - bundle install --deployment --without production development --jobs=$(nproc) --retry=3
+  - bundle exec rake db:create db:migrate
+  - LOG_LEVEL=warn bundle exec rspec
 
 # Copy bundler cache from the build environment to your host machine.
 # Plugin description: http://plugins.drone.io/drillster/drone-volume-cache
@@ -71,17 +82,23 @@ steps:
   - name: bundle-cache
     path: /cache
 
-- name: show-vendor
+# Update application version, markdown and swagger documentation, then push it to git repository.
+- name: git-tag-and-push
   image: ruby:2.5.3
-  environment:
-    DATABASE_HOST: database
-    RABBITMQ_HOST: rabbitmq
-    EVENT_API_RABBITMQ_HOST: rabbitmq
-    REDIS_URL: redis://redis:6379
-    RAILS_ENV: test
+  settings:
+    github_api_key:
+      from_secret: github_api_key
   commands:
-    - ls -R vendor/bundle
+  - rake release:drone
+  - echo "latest,$DRONE_BRANCH,$(git describe --tags --abbrev=0)" > .tags
+  - cat .tags
+  trigger:
+    event:
+    - push
+    branch:
+    - 2-0/issue-1903
 
+# Build and push docker image using ".tags" file.
 - name: docker-build-and-push
   image: plugins/docker
   settings:
@@ -89,14 +106,30 @@ steps:
       from_secret: docker_username
     password:
       from_secret: docker_password
-    repo: syaroslav/peatio
-  when:
+    repo: rubykube/peatio
+  trigger:
     event:
     - push
     branch:
-    - drone
+    - 2-0/issue-1903
+
+# Copy docker cache from the build environment to your host machine.
+# Plugin description: http://plugins.drone.io/drillster/drone-volume-cache
+# - name: rebuild-docker-cache
+#   pull: default
+#   image: drillster/drone-volume-cache
+#   settings:
+#     rebuild: true
+#     mount:
+#     - vendor/bundle
+#   volumes:
+#   - name: bundle-cache
+#     path: /cache
 
 volumes:
 - name: bundle-cache
   host:
     path: /tmp
+# - name: docker-cache
+#   host:
+#     path: /tmp
