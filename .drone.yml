@@ -35,24 +35,22 @@ steps:
 
 # Copy docker cache from the host machine to your build environment.
 # Plugin description: http://plugins.drone.io/drillster/drone-volume-cache
-# - name: restore-docker-cache
-#   pull: default
-#   image: drillster/drone-volume-cache
-#   settings:
-#     restore: true
-#     mount:
-#     - vendor/bundle
-#   volumes:
-#   - name: bundle-cache
-#     path: /cache
+- name: restore-docker-cache
+  pull: default
+  image: drillster/drone-volume-cache
+  settings:
+    restore: true
+    mount:
+    - /var/lib/docker
+  volumes:
+  - name: docker-cache
+    path: /cache
 
 # Wait MySQL to be ready for taking connections.
 - name: wait-for-mysql
-  image: jwilder/dockerize:0.6.0
-  environment:
-    DATABASE_HOST: database
+  image: jwilder/dockerize
   commands:
-  - dockerize -wait tcp://${DATABASE_HOST}:3306 -timeout 1m
+  - dockerize -wait tcp://database:3306 -timeout 1m
 
 # Initialize application. Install dependencies. Migrate database. Run rspec.
 - name: run-rspec
@@ -71,7 +69,7 @@ steps:
 
 # Copy bundler cache from the build environment to your host machine.
 # Plugin description: http://plugins.drone.io/drillster/drone-volume-cache
-- name: rebuild-cache
+- name: rebuild-bundler-cache
   pull: default
   image: drillster/drone-volume-cache
   settings:
@@ -115,21 +113,26 @@ steps:
 
 # Copy docker cache from the build environment to your host machine.
 # Plugin description: http://plugins.drone.io/drillster/drone-volume-cache
-# - name: rebuild-docker-cache
-#   pull: default
-#   image: drillster/drone-volume-cache
-#   settings:
-#     rebuild: true
-#     mount:
-#     - vendor/bundle
-#   volumes:
-#   - name: bundle-cache
-#     path: /cache
+- name: rebuild-docker-cache
+  pull: default
+  image: drillster/drone-volume-cache
+  settings:
+    rebuild: true
+    mount:
+    - vendor/bundle
+  volumes:
+  - name: bundle-cache
+    path: /cache
+  trigger:
+    event:
+    - push
+    branch:
+    - 2-0/issue-1903
 
 volumes:
-- name: bundle-cache
+- name: bundler-cache
   host:
-    path: /tmp
-# - name: docker-cache
-#   host:
-#     path: /tmp
+    path: /tmp/
+- name: docker-cache
+  host:
+    path: /tmp/
