@@ -11,7 +11,6 @@ Dockerfile.plugin
 .dockerignore
 
 # Ignore CI related files
-.travis.yml
 .drone.yml
 
 # Ignore files for development
