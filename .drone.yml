@@ -104,6 +104,11 @@ steps:
   commands:
   - ./bin/init_config
   - bundle install --deployment --without production development --jobs=$(nproc) --retry=3
+  - curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
+  - nvm install 8
+  - nvm use 8
+  - npm i -g yarn
+  - ./bin/init_config
   - bundle exec rake release:drone
   - echo "latest,$DRONE_BRANCH,$(git describe --tags --abbrev=0)" > .tags
   - cat .tags

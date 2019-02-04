@@ -13,7 +13,7 @@ namespace 'release' do
   desc 'Bump the version of the application'
 
   task :drone do
-    unless ENV['DRONE_BRANCH'] == 'drone'
+    unless ENV['DRONE_BRANCH'] == 'master'
       Kernel.abort 'Bumping version aborted: branch is not a master.'
     end
 
