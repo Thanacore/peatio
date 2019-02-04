@@ -53,13 +53,13 @@ steps:
 #     - push
 
 # Wait MySQL to be ready for taking connections.
-- name: wait-for-mysql
-  image: jwilder/dockerize
-  commands:
-  - dockerize -wait tcp://database:3306 -timeout 1m
-  when:
-    event:
-    - push
+# - name: wait-for-mysql
+#   image: jwilder/dockerize
+#   commands:
+#   - dockerize -wait tcp://database:3306 -timeout 1m
+#   when:
+#     event:
+#     - push
 
 # Initialize application. Install dependencies. Migrate database. Run rspec.
 # - name: run-rspec
@@ -149,7 +149,7 @@ steps:
 volumes:
 - name: bundler-cache
   host:
-    path: /tmp/
+    path: /tmp
 # - name: docker-cache
 #   host:
-#     path: /tmp/
+#     path: /tmp
