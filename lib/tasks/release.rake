@@ -17,7 +17,7 @@ namespace 'release' do
       Kernel.abort 'Bumping version aborted: GitHub pull request detected.'
     end
 
-    if ENV['DRONE_PULL_REQUEST'].to_s.empty?
+    unless ENV['DRONE_PULL_REQUEST'].to_s.empty?
       Kernel.abort 'Bumping version aborted: GitHub pull request detected.'
     end
 
