@@ -103,12 +103,11 @@ steps:
       from_secret: GITHUB_API_KEY
   commands:
   - ./bin/init_config
-  - bundle install --deployment --without production development --jobs=$(nproc) --retry=3
   - curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
-  - $HOME/.nvm/nvm.sh install 8
-  - $HOME/.nvm/nvm.sh use 8
+  - сhmod +x $HOME/.nvm/nvm.sh
+  - ./$HOME/.nvm/nvm.sh install 8 && ./$HOME/.nvm/nvm.sh use 8
   - npm i -g yarn
-  - ./bin/init_config
+  - bundle install --deployment --without production development --jobs=$(nproc) --retry=3
   - bundle exec rake release:drone
   - echo "latest,$DRONE_BRANCH,$(git describe --tags --abbrev=0)" > .tags
   - cat .tags
