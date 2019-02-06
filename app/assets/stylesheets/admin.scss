@@ -119,7 +119,7 @@ table.table {
   margin-bottom: 0;
 }
 
-.card.card-primary {
+.card-primary {
   .card-header {
     &, a {
       color: white;
@@ -128,7 +128,6 @@ table.table {
 }
 .card {
   padding: 0;
-<<<<<<< HEAD
 }
 
 .well table{
@@ -138,6 +137,3 @@ table.table {
 .well {
   padding-bottom: 10px !important;
 }
-=======
-}
->>>>>>> 5080dd77... Rework Peatio accounting using double entry accounting system  (#1777)
