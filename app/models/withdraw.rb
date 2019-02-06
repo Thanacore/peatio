@@ -79,16 +79,11 @@ class Withdraw < ActiveRecord::Base
     end
 
     event :reject do
-<<<<<<< HEAD
-      transitions from: %i[submitted accepted confirming], to: :rejected
-      after :unlock_funds
-=======
       transitions from: %i[submitted accepted], to: :rejected
       after do
         unlock_funds
         record_cancel_operations!
       end
->>>>>>> 5080dd77... Rework Peatio accounting using double entry accounting system  (#1777)
     end
 
     event :process do
