@@ -10,18 +10,10 @@ class OrderAsk < Order
             numericality: { greater_than_or_equal_to: ->(order){ order.market.min_ask }},
             if: :is_limit_order?
 
-<<<<<<< HEAD
   validates :origin_volume,
             presence: true,
             numericality: { greater_than_or_equal_to: ->(order){ order.market.min_ask_amount }},
             if: ->(order){ order.market.min_ask_amount.present? }
-
-=======
-  # @deprecated
->>>>>>> 5080dd77... Rework Peatio accounting using double entry accounting system  (#1777)
-  def hold_account
-    member.get_account(ask)
-  end
 
   # @deprecated
   def hold_account!
