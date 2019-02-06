@@ -10,18 +10,10 @@ class OrderBid < Order
             numericality: { less_than_or_equal_to: ->(order){ order.market.max_bid }},
             if: ->(order){ order.ord_type == 'limit' && order.market.max_bid.present? }
 
-<<<<<<< HEAD
   validates :origin_volume,
             presence: true,
             numericality: { greater_than_or_equal_to: ->(order){ order.market.min_bid_amount }},
             if: ->(order){ order.market.min_bid_amount.present? }
-
-=======
-  # @deprecated
->>>>>>> 5080dd77... Rework Peatio accounting using double entry accounting system  (#1777)
-  def hold_account
-    member.get_account(bid)
-  end
 
   # @deprecated
   def hold_account!
