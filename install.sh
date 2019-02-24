@@ -4,7 +4,6 @@
 # Telegram @adarshdubey
 # Email adarshdubeytech@gmail.com
 
-################################################################
 #  Goals of the script:
 #  To install the secured crypto currency exchange
 #
